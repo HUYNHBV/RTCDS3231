@@ -1,0 +1,24 @@
+--cpu Cortex-M3
+"rtcds3231\startup_stm32f103xb.o"
+"rtcds3231\system_stm32f1xx.o"
+"rtcds3231\stm32f1xx_hal_msp.o"
+"rtcds3231\main.o"
+"rtcds3231\stm32f1xx_it.o"
+"rtcds3231\i2c-lcd.o"
+"rtcds3231\stm32f1xx_hal_rcc.o"
+"rtcds3231\stm32f1xx_hal_cortex.o"
+"rtcds3231\stm32f1xx_hal_gpio_ex.o"
+"rtcds3231\stm32f1xx_hal_gpio.o"
+"rtcds3231\stm32f1xx_hal_rcc_ex.o"
+"rtcds3231\stm32f1xx_hal_i2c.o"
+"rtcds3231\stm32f1xx_hal_flash.o"
+"rtcds3231\stm32f1xx_hal_flash_ex.o"
+"rtcds3231\stm32f1xx_hal.o"
+"rtcds3231\stm32f1xx_hal_tim.o"
+"rtcds3231\stm32f1xx_hal_tim_ex.o"
+"rtcds3231\stm32f1xx_hal_pwr.o"
+"rtcds3231\stm32f1xx_hal_dma.o"
+--library_type=microlib --strict --scatter "RTCDS3231\RTCDS3231.sct"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "RTCDS3231.map" -o RTCDS3231\RTCDS3231.axf
