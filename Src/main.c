@@ -42,6 +42,7 @@
 
 /* USER CODE BEGIN Includes */
 #include "i2c-lcd.h"
+#include "ds3231.h"
 
 /* USER CODE END Includes */
 
@@ -52,10 +53,7 @@ DMA_HandleTypeDef hdma_i2c2_rx;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-uint8_t BCD2DEC(uint8_t data);
-uint8_t DEC2BCD(uint8_t data);
-float Get_Temp (void);
-void mTimeInit(void);
+
 #define DS3231_ADD 	0x68
 
 /* USER CODE END PV */
@@ -69,7 +67,8 @@ static void MX_I2C1_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-	uint8_t receive_data[7],send_data[7];
+	uint8_t receive_data[7];
+	uint8_t receive_data2[7];
 	uint8_t second,minute,hour,day,date,month,year;
 /* USER CODE END PFP */
 
@@ -116,9 +115,8 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-  {
-		HAL_I2C_Mem_Read_DMA(&hi2c2,DS3231_ADD<<1,0,I2C_MEMADD_SIZE_8BIT,receive_data,7);
-				
+  {		
+		Get_DateTime( &second, &minute,&hour, &day, &date, &month, &year);
 		char buf1[50];
 		sprintf(buf1, "%02d/%02d %02d:%02d:%02d", date, month, hour, minute, second);		
 		lcd_goto_XY(1,0);
@@ -259,69 +257,6 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-void mTimeInit(void)
-{
-		// 12h:12m:12s Monday 12/12/12
-		send_data[0]=DEC2BCD(50);
-		send_data[1]=DEC2BCD(44);
-		send_data[2]=DEC2BCD(18);
-		
-		send_data[3]=DEC2BCD(7);
-		send_data[4]=DEC2BCD(19);
-		send_data[5]=DEC2BCD(4);
-		send_data[6]=DEC2BCD(20);
-		HAL_I2C_Mem_Write_IT(&hi2c2,DS3231_ADD<<1,0,I2C_MEMADD_SIZE_8BIT,send_data,7);
-		
-}
-
-float Get_Temp (void)
-{
-	uint8_t temp[2];
-	HAL_I2C_Mem_Read(&hi2c2, DS3231_ADD<<1, 0x11, 1, temp, 2, 1000);
-	return ((temp[0])+(temp[1]>>6)/4.0);
-}
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-	if(GPIO_Pin==GPIO_PIN_0)
-	{
-		// 12h:12m:12s Monday 12/12/12
-		send_data[0]=DEC2BCD(12);
-		send_data[1]=DEC2BCD(12);
-		send_data[2]=DEC2BCD(12);
-		
-		send_data[3]=DEC2BCD(2);
-		send_data[4]=DEC2BCD(12);
-		send_data[5]=DEC2BCD(12);
-		send_data[6]=DEC2BCD(12);
-		HAL_I2C_Mem_Write_IT(&hi2c2,DS3231_ADD<<1,0,I2C_MEMADD_SIZE_8BIT,send_data,7);
-	}
-}
-
-void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
-{
-	if(hi2c->Instance==hi2c2.Instance)
-	{
-		second=BCD2DEC(receive_data[0]);
-		minute=BCD2DEC(receive_data[1]);
-		hour=BCD2DEC(receive_data[2]);
-		
-		day=BCD2DEC(receive_data[3]);
-		date=BCD2DEC(receive_data[4]);
-		month=BCD2DEC(receive_data[5]);
-		year= BCD2DEC(receive_data[6]);
-	}
-}
-
-uint8_t BCD2DEC(uint8_t data)
-{
-	return (data>>4)*10 + (data&0x0f);
-}
-
-uint8_t DEC2BCD(uint8_t data)
-{
-	return (data/10)<<4|(data%10);
-}
 
 /* USER CODE END 4 */
 
