@@ -43,6 +43,7 @@
 /* USER CODE BEGIN Includes */
 #include "i2c-lcd.h"
 #include "ds3231.h"
+#include "AT24C32.h"
 
 /* USER CODE END Includes */
 
@@ -67,9 +68,8 @@ static void MX_I2C1_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-	uint8_t receive_data[7];
-	uint8_t receive_data2[7];
 	uint8_t second,minute,hour,day,date,month,year;
+	uint8_t readbyte, huynhbv;
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -108,8 +108,8 @@ int main(void)
   MX_I2C2_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-	//mTimeInit();
-	lcd_init();
+
+lcd_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -128,7 +128,11 @@ int main(void)
 		lcd_send_string(buf2);
 		HAL_Delay(1000);
 		lcd_clear_display();
-  /* USER CODE END WHILE */
+		
+	huynhbv = 101;
+	//writeEEPROM(0, huynhbv);
+	readEEPROM(0, &readbyte);
+		/* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
 		
